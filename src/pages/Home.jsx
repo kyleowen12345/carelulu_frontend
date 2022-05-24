@@ -28,7 +28,7 @@ const Home = () => {
           textShadow={"3px 2px black"}
           fontWeight="medium"
           >
-            Plan ahead, create your task with steps today.. </Heading>
+            Create your task with steps today.. </Heading>
           <Text 
             textShadow={"3px 2px black"}
             fontSize={'lg'}

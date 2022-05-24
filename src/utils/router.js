@@ -1,11 +1,84 @@
 import React, { useState, useEffect } from 'react';
+import { gql, useQuery  } from '@apollo/client';
 
-import { Navigate, matchPath, useLocation, useNavigate} from "react-router-dom";
+import { Navigate, useLocation, useNavigate} from "react-router-dom";
+
+import Cookies from 'js-cookie'
+import Loader from '../component/Loader';
+
+const FETCHUSER = gql`
+query FetchUser {
+    fetchUser {
+      id
+      firstName
+      lastName
+      email
+      
+        createdAt
+        updatedAt
+      }
+    }
+  
+`;
 
 
 const PrivateRoute = ({children}) => {
-    let token = localStorage.getItem("token");
+    const navigate = useNavigate();
+    const token = Cookies.get('carelulu');
+
+    const location = useLocation();
 
     const [ Authenticated, SetAuthentication ] = useState(false);
+
+    const { called, loading, data,refetch } = useQuery(
+        FETCHUSER,
+        {
+            context:{
+                headers:{
+                    token:token || ""
+                }
+            },
+            fetchPolicy:"cache-and-network ",
+            pollInterval: 500,
+            onCompleted:data => {
+                if(data){
+                    // condition
+                    SetAuthentication(true)
+                    console.log(data)
+                }
+            },
+            onError:error => {
+                 if(error){
+                    SetAuthentication(false)
+                    console.log(error)
+                 }
+            }
+           
+        }
+      )
+
+    useEffect(() => {
+       if(token){
+            refetch()
+
+       }else{
+
+           navigate('/')
+       }
+
+    }, [token,refetch,navigate])
+
+    console.log(called)
+
+    return  loading ? 
+    <Loader/>
+    :
+    (
+        Authenticated ? children: <Navigate to="/login" state={{ from: location }} replace />
+    )
+    
+    
     
 }
+
+export {PrivateRoute}

@@ -11,6 +11,7 @@ import Task from "./pages/Task";
 
 import Header from './component/header/index'
 import Footer from './component/footer/index'
+import { PrivateRoute } from "./utils/router";
 
 export default function AppRoutes() {
     return (
@@ -57,7 +58,13 @@ export default function AppRoutes() {
 
                     <Route
                        path={PageBaseUrl.Dashboard}
-                       element={<Dashboard/>}
+                       element={
+                       <PrivateRoute>
+                         <Header/>
+                          <Dashboard/>
+                          <Footer/>
+                       </PrivateRoute>
+                       }
                      />
                      <Route
                        path={PageBaseUrl.Task}
