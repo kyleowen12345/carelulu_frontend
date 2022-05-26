@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link as RouterLink  } from "react-router-dom";
 import careluluhome from '../assests/images/careluluhome.jpg'
+import { Helmet } from "react-helmet-async";
 
 import {
   Box,
@@ -11,7 +12,11 @@ import {
 
 const Home = () => {
   return (
-     <Box 
+    <>
+    <Helmet title={'Carelulu'}>
+      <body id={'carelulu'}></body>
+    </Helmet>
+    <Box 
        minH={"90vh"}
        backgroundImage={careluluhome}
        backgroundSize={'cover'}
@@ -79,6 +84,8 @@ const Home = () => {
           </Box>
          
      </Box>
+    </>
+     
   )
 }
 

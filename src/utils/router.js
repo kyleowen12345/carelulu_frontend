@@ -41,7 +41,6 @@ const PrivateRoute = ({children}) => {
                 }
             },
             fetchPolicy:"cache-and-network ",
-            pollInterval: 500,
             onCompleted:data => {
                 if(data){
                     // condition
@@ -67,7 +66,6 @@ const PrivateRoute = ({children}) => {
        if(token){
             refetch()
        }else{
-
            navigate('/login')
        }
 
