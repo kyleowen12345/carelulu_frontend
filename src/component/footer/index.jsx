@@ -3,6 +3,7 @@ import {  Box, Image,useMediaQuery,Link  } from '@chakra-ui/react'
 import FooterLinks from './FooterLinks'
 import Social from './Social'
 import SmallLinks from './SmallLinks'
+import footercarelulu from '../../assests/images/footercarelulu.png'
 
 const Footer = () => {
   const [isLargerThan992] = useMediaQuery('(min-width: 992px)')
@@ -29,7 +30,7 @@ const Footer = () => {
           href='https://www.carelulu.com/'
           target={"_blank"}
         >
-           <Image w={"153px"} mr={7} src='https://c2zyebdn.cloudimg.io/s/cdn/x/https://divin2sy6ce0b.cloudfront.net/images/carelulu_logo_square_white.png'/>
+           <Image w={"153px"} mr={7} src={footercarelulu}/>
         </Link>
         {isLargerThan992 ? <FooterLinks/> : <SmallLinks/> }
         <Social/>

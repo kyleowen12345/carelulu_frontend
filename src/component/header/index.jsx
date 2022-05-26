@@ -2,7 +2,7 @@ import React from 'react'
 import {  Box, Image  } from '@chakra-ui/react'
 import { Link as RouterLink  } from "react-router-dom";
 import ToggleMenu from './ToggleMenu'
-
+import navbarcarelulu from '../../assests/images/navbarcarelulu.png'
 
 const Header = () => {
   return (
@@ -23,7 +23,7 @@ const Header = () => {
        alignItems="center"
       > 
         <RouterLink to="/">
-             <Image height={"35px"} src='https://c2zyebdn.cloudimg.io/s/cdn/x/https:/divin2sy6ce0b.cloudfront.net/images/2017-11-06/whiteLogo2-min.png'/>
+             <Image height={"35px"} src={navbarcarelulu}/>
         </RouterLink>
          
          <ToggleMenu/>
