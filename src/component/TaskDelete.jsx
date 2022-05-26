@@ -34,7 +34,7 @@ const TaskDelete = ({taskId}) => {
         query:MYTASKS,
         variables:{ 
         curPage:1,
-        perPage:5,
+        perPage:4,
         fieldOrder:"createdAt",
         sort:"DESC"
     },

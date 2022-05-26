@@ -18,6 +18,7 @@ const Footer = () => {
       as="footer"
       py={5}
       bottom={0}
+      mt={5}
     >
       <Box
        h={["90%","90%","90%","90%","145px"]}
