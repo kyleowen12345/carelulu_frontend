@@ -2,6 +2,7 @@ import React from 'react'
 import { gql, useMutation } from '@apollo/client';
 import { useForm } from 'react-hook-form';
 import { Link as RouterLink,useNavigate  } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 import {
   Flex,
@@ -55,7 +56,7 @@ const Login = () => {
             position:"top-right",
             isClosable: true,
           })
-        navigate("/")  
+        navigate("/dashboard")  
        }
     }
   });
@@ -70,7 +71,11 @@ const Login = () => {
 };
 
   return (
-    <Flex
+    <>
+  <Helmet title={'Login'}>
+    <body id={'Login'}></body>
+  </Helmet>
+      <Flex
     minH={'80vh'}
     align={'center'}
     justify={'center'}
@@ -195,6 +200,8 @@ const Login = () => {
       </Box>
     </Stack>
   </Flex>
+    </>
+    
   )
 }
 

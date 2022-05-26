@@ -7,7 +7,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
-import Task from "./pages/Task";
+// import Task from "./pages/Task";
 
 import Header from './component/header/index'
 import Footer from './component/footer/index'
@@ -66,10 +66,11 @@ export default function AppRoutes() {
                        </PrivateRoute>
                        }
                      />
-                     <Route
+                     {/* For futher development  */}
+                     {/* <Route
                        path={PageBaseUrl.Task}
                        element={<Task/>}
-                     />
+                     /> */}
                       
                 </Routes>
            </BrowserRouter>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
+import { HelmetProvider } from 'react-helmet-async';
 import {Global,css} from '@emotion/react'
 import '@fontsource/poppins';
 import theme from './utils/theme'
@@ -10,6 +11,7 @@ import {
   ApolloProvider,
   // useQuery,
   // gql
+  makeVar 
 } from "@apollo/client";
 import AppRoutes from './routes';
 
@@ -31,20 +33,34 @@ const GlobalStyle = ({ children }) => {
   );
 };
 
+export const fetchUserVar = makeVar({}); 
+console.log(process.env.REACT_APP_API_URL)
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql',
-  cache: new InMemoryCache()
+  uri:process.env.REACT_APP_API_URL,
+  cache: new InMemoryCache({
+    Query:{
+      field:{
+        fetchUser:{
+           read() {
+              return fetchUserVar()
+           }
+        }
+      }
+    }
+  })
 });
 
 function App() {
   return (
-    <ApolloProvider client={client}>
-        <ChakraProvider theme={theme} >
-              <GlobalStyle>
-                  <AppRoutes/>
-              </GlobalStyle>  
-        </ChakraProvider>
-    </ApolloProvider> 
+    <HelmetProvider>
+      <ApolloProvider client={client}>
+          <ChakraProvider theme={theme} >
+                <GlobalStyle>
+                    <AppRoutes/>
+                </GlobalStyle>  
+          </ChakraProvider>
+      </ApolloProvider>
+    </HelmetProvider> 
     
   );
 }

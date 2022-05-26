@@ -1,4 +1,7 @@
 import React from 'react'
+import { gql, useQuery,useReactiveVar   } from '@apollo/client';
+import {  useNavigate} from "react-router-dom";
+import { fetchUserVar } from '../../App';
 import {
     Menu,
     MenuButton,
@@ -9,11 +12,28 @@ import {
   } from '@chakra-ui/react'
   import {AiOutlineDown} from 'react-icons/ai'
   import { Link as RouterLink } from "react-router-dom";
+  import Cookies from 'js-cookie'
 
 
-   
+  const FETCHUSER = gql`
+query FetchUser {
+    fetchUser {
+      id
+      firstName
+      lastName
+      email
+      
+        createdAt
+        updatedAt
+      }
+    }
+  
+`; 
 
 const ToggleMenu = () => {
+  const userDetails = useReactiveVar(fetchUserVar);
+  const navigate = useNavigate();
+  const {client, } = useQuery(FETCHUSER)
   const routes = [
     {
       name:'Home',
@@ -27,11 +47,20 @@ const ToggleMenu = () => {
       name:'Register',
       route:'/register'
     },
-    {
-      name:'About Us',
-      route:'/about-us'
-    }
+    
   ]
+  const userroutes = [
+    {
+      name:'Home',
+      route:'/'
+    },
+    {
+      name:'Dashboard',
+      route:'/dashboard'
+    },
+   
+  ]
+  
   return (
      <Menu>
       <MenuButton 
@@ -51,7 +80,23 @@ const ToggleMenu = () => {
         bg={"gold.100"}
         color={"white"}
       >
-        {routes.map(i=>(
+        {
+          userDetails.email ?  
+          userroutes.map(i=>(
+            <RouterLink
+            key={i.route}
+            to={i.route}
+            >
+                <MenuItem
+                _hover={{bg:"#FFFFFF ",color:"gold.100",opacity:0.7}}
+                _focus={{bg:"gold.100",color:"white"}}
+                
+                >{i.name}</MenuItem>
+            </RouterLink>
+  
+          ))
+          :
+        routes.map(i=>(
           <RouterLink
           key={i.route}
           to={i.route}
@@ -64,6 +109,17 @@ const ToggleMenu = () => {
           </RouterLink>
 
         ))}
+       {userDetails.firstName && <MenuItem
+              _hover={{bg:"#FFFFFF ",color:"gold.100",opacity:0.7}}
+              _focus={{bg:"gold.100",color:"white"}}
+              onClick={()=>{
+                client.clearStore()
+                Cookies.remove('carelulu')
+                fetchUserVar({})
+                navigate('/login')
+              }}
+              
+              >Logout</MenuItem>}
       </MenuList>
 </Menu>
   )

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { gql, useQuery  } from '@apollo/client';
+import { gql, useQuery   } from '@apollo/client';
 
 import { Navigate, useLocation, useNavigate} from "react-router-dom";
-
+import {fetchUserVar} from '../App'
 import Cookies from 'js-cookie'
 import Loader from '../component/Loader';
 
@@ -23,6 +23,7 @@ query FetchUser {
 
 
 const PrivateRoute = ({children}) => {
+
     const navigate = useNavigate();
     const token = Cookies.get('carelulu');
 
@@ -30,7 +31,8 @@ const PrivateRoute = ({children}) => {
 
     const [ Authenticated, SetAuthentication ] = useState(false);
 
-    const { called, loading, data,refetch } = useQuery(
+
+    const {  loading,refetch } = useQuery(
         FETCHUSER,
         {
             context:{
@@ -43,8 +45,12 @@ const PrivateRoute = ({children}) => {
             onCompleted:data => {
                 if(data){
                     // condition
+                    fetchUserVar({
+                        firstName:data?.fetchUser.firstName,
+                        lastName:data?.fetchUser.lastName,
+                        email:data?.fetchUser.email
+                    })
                     SetAuthentication(true)
-                    console.log(data)
                 }
             },
             onError:error => {
@@ -60,15 +66,12 @@ const PrivateRoute = ({children}) => {
     useEffect(() => {
        if(token){
             refetch()
-
        }else{
 
-           navigate('/')
+           navigate('/login')
        }
 
     }, [token,refetch,navigate])
-
-    console.log(called)
 
     return  loading ? 
     <Loader/>

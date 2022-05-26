@@ -2,6 +2,7 @@ import React from 'react'
 import { gql, useMutation } from '@apollo/client';
 import { useForm } from 'react-hook-form';
 import { Link as RouterLink,useNavigate  } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 
 import {
@@ -62,7 +63,7 @@ const Register = () => {
             position:"top-right",
             isClosable: true,
           })
-        navigate("/")  
+        navigate("/dashboard")  
        }
     }
   });
@@ -77,9 +78,13 @@ const Register = () => {
     await signup({variables:{firstName:firstName,lastName:lastName,email:email,password:password}})
     
 };
-
+  console.log(process.env.REACT_APP_API_URL)
   return (
-        <Flex
+    <>
+    <Helmet title={'Register'}>
+      <body id={'register'}></body>
+    </Helmet>
+          <Flex
           minH={'80vh'}
           align={'center'}
           justify={'center'}
@@ -230,6 +235,8 @@ const Register = () => {
             </Box>
           </Stack>
         </Flex>
+    </>
+       
       
     
   )

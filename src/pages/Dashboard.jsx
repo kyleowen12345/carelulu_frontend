@@ -1,132 +1,152 @@
-import React, { useState, useEffect } from 'react';
+import React, {  useEffect } from 'react';
 import { gql, useLazyQuery  } from '@apollo/client';
 import Cookies from 'js-cookie'
+import { useSearchParams  , useNavigate} from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 import {
-  Box,
-  Heading,
-  Text,
+  Grid,
   Stack,
-Avatar,
-  useColorModeValue,
-  Image,
-  Checkbox,
-  Button,
-  Icon,
-  
 } from '@chakra-ui/react';
 
-import {AiOutlinePlusCircle,AiOutlineEdit,AiOutlineDelete} from 'react-icons/ai'
+import DashboardCards from '../component/dashboard/DashboardCards';
+import DashboardSort from '../component/dashboard/DashboardSort';
+import DashboardCreator from '../component/dashboard/DashboardCreator';
+import DashboardLoader from '../component/loaders/DashboardLoader';
+import EmptyDashBoard from '../component/dashboard/EmptyDashBoard';
+import Pagination from '../component/Pagination';
+
+
+export const MYTASKS = gql`
+query Mytasks($curPage: Int!, $perPage: Int!, $fieldOrder: String!, $sort: String!) {
+  Mytasks(curPage: $curPage, perPage: $perPage, fieldOrder: $fieldOrder, sort: $sort) {
+    tasks {
+      id
+      title
+      note
+      status
+      steps {
+        content
+        complete
+      }
+      createdAt
+      updatedAt
+    }
+    curPage
+    maxPage
+    taskCount
+  }
+}
+`;
 
 const Dashboard = () => {
-  return (
+   
+  const [searchParams] = useSearchParams();
+  const curPage = searchParams.get('curPage')
+  const perPage = searchParams.get('perPage')
+  const fieldOrder = searchParams.get('fieldOrder')
+  const sort = searchParams.get('sort')
+
+  const navigate = useNavigate();
+
+  const token = Cookies.get('carelulu');
+
+  const [mytasks,{ data }] = useLazyQuery(
+    MYTASKS,
+    {   
+       variables:{
+          curPage:parseInt(curPage) || 1,
+          perPage:parseInt(perPage) || 4,
+          fieldOrder:fieldOrder || "createdAt",
+          sort: sort || "DESC"
+       },
+        context:{
+            headers:{
+                token:token || ""
+            }
+        },
+        fetchPolicy:"cache-and-network ",
+        onCompleted:data => {
+            if(data){
   
-      <Box
-        maxW={'400px'}
-        maxH="500px"
-        bg={useColorModeValue('white', 'gray.900')}
-        boxShadow={'2xl'}
-        rounded={'md'}
-        p={6}
-        overflow={'hidden'}>
-        
-        {/* Heading */}
-        <Stack spacing={3}>
-          <Box
-            display={"flex"}
-            justifyContent="space-between"
-            alignItems={"center"}
-          >
-            <Text
-              color={'myTeal.100'}
-              textTransform={'uppercase'}
-              fontWeight={800}
-              fontSize={'sm'}
-              letterSpacing={1.1}>
-              Task
-            </Text>
-            <Text
-              color={'myTeal.100'}
-              textTransform={'uppercase'}
-              fontWeight={800}
-              fontSize={'10px'}
-              letterSpacing={1.1}>
-              In Progress
-            </Text>
-          </Box>
-         
-            {/* Title */}
-            <Heading
-              color={useColorModeValue('gray.700', 'white')}
-              fontSize={"2xl"}
-              >
-              Boost your conversion rate
-            </Heading>
-            {/* note */}
-            <Text color={'gray.500'} fontSize="12px">
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-              erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
-              et ea rebum.
-            </Text>
-        </Stack>
-
-
-        {/* Steps */}
-          <Heading
-            color={useColorModeValue('gray.700', 'white')}
-            fontSize={"15px"}
-            mt={5} 
-          >
-              Steps
-          </Heading>
-
-        <Stack spacing={1} ml={2} mt={2} direction='column'>
+                // condition
+            }
+        },
+        onError:error => {
+             if(error){
+                console.log(error)
+             }
+        }
        
-            <Checkbox _focus={{boxShadow: 'none'}} colorScheme='green' defaultChecked >
-              <Text fontSize={"11px"}>Checkbox</Text>
-            </Checkbox>
-            <Checkbox colorScheme='green' defaultChecked >
-              <Text fontSize={"11px"}>Checkbox</Text>
-            </Checkbox>
-            <Checkbox colorScheme='green' defaultChecked >
-              <Text fontSize={"11px"}>Checkbox</Text>
-            </Checkbox>
-            <Checkbox colorScheme='green' defaultChecked >
-              <Text fontSize={"11px"}>Checkbox</Text>
-            </Checkbox>
-            <Checkbox colorScheme='green' defaultChecked >
-              <Text fontSize={"11px"}>Checkbox</Text>
-            </Checkbox>
-            <Checkbox colorScheme='green' defaultChecked >
-              <Text fontSize={"11px"}>Checkbox</Text>
-            </Checkbox>
-        </Stack>
+    }
+  )
+  
+  useEffect(() => {
+    if(token){
+         mytasks()
+    }
+    if(token  && curPage && perPage && fieldOrder && sort ) {
+      mytasks()
+    }
 
-        <Stack mt={6} direction={'row'} spacing={4} align={'center'} justifyContent="space-between">
-            
-            {/* Date */}
-            <Stack direction={'column'} spacing={0} fontSize={'sm'}>
-              <Text color={'gray.500'} fontSize="12px">Feb 08, 2021</Text>
-              </Stack>
+ }, [token,mytasks,navigate,sort,fieldOrder,perPage,curPage])
 
-              {/* Icons */}
-              <Box
-               display={"flex"}
-               justifyContent="space-between"
-               alignItems={"center"}
-               width={"100px"}
-              >
-              
-                <Icon as={AiOutlineEdit} color="myTeal.100" w={7} h={7} cursor="pointer"/>
-                <Icon as={AiOutlineDelete} color="myTeal.100" w={7} h={7} cursor="pointer"/>
-                <Icon as={AiOutlinePlusCircle} color="myTeal.100" w={7} h={7} cursor="pointer"/>
-              </Box>
-          
-          
-        </Stack>
-      </Box>
+
+
+
+  return (
+    <>
+    <Helmet title={'Dashboard'}>
+      <body id={'dashboard'}></body>
+    </Helmet>
+    <Stack
+        maxW={'960px'}
+        mx="auto"
+        minH={"80vh"}
+        spacing={8}
+        px={2}
+        mb={5}
+      > 
+      
+        <DashboardCreator />
+        <DashboardSort/>
+        {
+          data?.Mytasks.tasks.length < 1 ? 
+          <EmptyDashBoard/>
+          :
+          data ?
+          <Grid templateColumns={['repeat(1, 1fr)','repeat(1, 1fr)','repeat(1, 1fr)','repeat(2, 1fr)']}  gap={3}>
+          {
+            data?.Mytasks.tasks.map(i=>(
+              <DashboardCards
+               key={i.id}
+               details={i}
+              />
+            ))
+          }
+        </Grid>
+        :
+         <DashboardLoader/>
+        }
+        
+       { 
+       data?.Mytasks.maxPage > 1 &&
+       <Pagination  
+          marginPages={2}
+          pageRange={2}
+          initialPage={data?.Mytasks.curPage -1}
+          pageCount={data?.Mytasks.maxPage}
+        />
+        }
+
+
+        
+
+        
+      </Stack>
  
+    </>
+      
   )
 }
 
